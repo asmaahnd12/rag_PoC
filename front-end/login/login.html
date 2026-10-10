@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem("sont_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/assets/theme.css?v=6" />
+    <link rel="stylesheet" href="/static/login/login.css" />
+  </head>
+
+  <body>
+    <!--  SLIDER -->
+    <div class="top-section">
+      <!-- LOGO -->
+      <div class="logo">
+        <img src="/static/assets/app-logo.png" alt="logo" />
+      </div>
+
+      <!-- SLIDES -->
+      <div class="slider">
+        <div class="slide active">
+          <img src="/static/assets/login-image-1.jpg" />
+          <div class="overlay"></div>
+        </div>
+
+        <div class="slide">
+          <img src="/static/assets/login-image-2.jpg" />
+          <div class="overlay"></div>
+        </div>
+
+        <div class="slide">
+          <img src="/static/assets/login-image-3.jpg" />
+          <div class="overlay"></div>
+        </div>
+
+        <div class="slide">
+          <img src="/static/assets/login-image-4.jpg" />
+          <div class="overlay"></div>
+        </div>
+      </div>
+    </div>
+
+    <!--  LOGIN -->
+    <div class="container">
+      <div class="login-box">
+        <h1>Bienvenue sur Chatbot-IA</h1>
+        <p class="subtitle">(Entreprise de pétrole et de gaz - IA)</p>
+
+        <label>Nom d'utilisateur</label>
+        <input type="text" placeholder="Entrez votre nom d'utilisateur" />
+
+        <label>Mot de passe</label>
+        <input type="password" placeholder="Entrez votre mot de passe" />
+
+        <button>Se connecter</button>
+
+        <p class="error-message"></p>
+      </div>
+    </div>
+
+    <script src="/static/config.js"></script>
+    <script src="/static/assets/theme.js?v=2"></script>
+    <script src="/static/login/login.js"></script>
+
+    <!--  SLIDER JS -->
+    <script>
+      let slides = document.querySelectorAll(".slide");
+      let index = 0;
+
+      setInterval(() => {
+        slides[index].classList.remove("active");
+        index = (index + 1) % slides.length;
+        slides[index].classList.add("active");
+      }, 4000);
+    </script>
+  </body>
+</html>

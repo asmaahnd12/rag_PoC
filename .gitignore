@@ -1,0 +1,8 @@
+.env
+/venv
+__pycache__
+users.db
+.pfe
+data/*.db
+qdrant_storage
+.vscode

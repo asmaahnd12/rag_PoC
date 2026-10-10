@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot-IA – Statistiques</title>
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem("sont_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="/static/assets/theme.css?v=6" />
+    <link rel="stylesheet" href="/static/stats/stats.css?v=6" />
+  </head>
+
+  <body class="stats-page">
+    <div class="app">
+
+      <!-- ===== SIDEBAR ===== -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo">
+            <img src="/static/assets/app-logo.png" alt="Logo IA Chatbot" />
+          </div>
+          <div>
+            <div class="brand-title">Chatbot-IA</div>
+            <div class="brand-sub">Panneau Admin</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="nav-btn" id="backToChatBtn">
+            <span class="nav-icon">💬</span> Retour au Chat
+          </button>
+          <button class="nav-btn" id="adminControlsBtn">
+            <span class="nav-icon">🛠️</span> Panneau Admin
+          </button>
+          <button class="nav-btn active" id="navStats">
+            <span class="nav-icon">📊</span> Statistiques
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-card">
+            <div class="avatar-sm" id="adminAvatar">A</div>
+            <div>
+              <div class="user-name" id="adminName">Admin</div>
+              <div class="user-role">Administrateur</div>
+            </div>
+          </div>
+          <button class="btn-logout" id="logoutAdminBtn">Déconnexion</button>
+        </div>
+      </aside>
+
+      <!-- ===== MAIN ===== -->
+      <main class="main">
+        <!-- En-tête page -->
+        <div class="page-header">
+          <div>
+            <h1>Statistiques</h1>
+            <p class="page-subtitle">Suivi des performances et des utilisations</p>
+          </div>
+        </div>
+
+        <!-- ===== BIBLIOTHÈQUE DE BASE ===== -->
+        <div class="library-section">
+          <div class="section-title">Bibliothèque de base</div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number" id="statPdf">0</span>
+              <span class="stat-label">PDF</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="statPptx">0</span>
+              <span class="stat-label">PPTX</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="statDocx">0</span>
+              <span class="stat-label">DOCX</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="statTxt">0</span>
+              <span class="stat-label">TXT / MD</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STATISTIQUES HEBDOMADAIRES ===== -->
+        <div class="weekly-section">
+          <div class="weekly-header">
+            <div>
+              <h2>Statistiques hebdomadaires par utilisateur</h2>
+              <p class="weekly-subtitle">
+                Suivi des requêtes et des sources utilisées sur 7 jours.
+              </p>
+            </div>
+            <div class="weekly-range" id="weeklyRange">Semaine courante</div>
+          </div>
+
+          <!-- Contrôles -->
+          <div class="weekly-controls">
+            <div class="control-field">
+              <label for="weeklyUsername">Nom d'utilisateur</label>
+              <input
+                type="text"
+                id="weeklyUsername"
+                placeholder="Ex : Souad"
+                autocomplete="off"
+              />
+            </div>
+            <div class="control-field">
+              <label for="weeklyStart">Semaine du</label>
+              <input type="date" id="weeklyStart" />
+            </div>
+            <button class="btn-charger" id="weeklyLoadBtn">Charger</button>
+          </div>
+
+          <div class="weekly-status" id="weeklyStatus"></div>
+
+          <!-- Résumé -->
+          <div class="section-title">Résumé</div>
+          <div class="weekly-summary">
+            <div class="summary-item">
+              <span class="summary-label">Requêtes</span>
+              <span class="summary-value" id="weeklyRequestCount">0</span>
+            </div>
+            <div
+              class="summary-item clickable-summary"
+              id="weeklyFileTotalCard"
+            >
+              <span class="summary-label">Fichiers uniques</span>
+              <span class="summary-value" id="weeklyFileTotal">0</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Utilisations totales</span>
+              <span class="summary-value" id="weeklyFileUses">0</span>
+            </div>
+          </div>
+
+          <!-- Scope sources -->
+          <div class="weekly-scope">
+            <span class="scope-label">Sources</span>
+            <div class="scope-actions">
+              <button
+                class="scope-btn is-active"
+                data-scope="active"
+                type="button"
+              >
+                Sessions actives
+              </button>
+              <button class="scope-btn" data-scope="deleted" type="button">
+                Sessions supprimées
+              </button>
+            </div>
+          </div>
+
+          <!-- Types de fichiers -->
+          <div class="section-title">Par type de fichier</div>
+          <div class="weekly-types">
+            <div class="type-card">
+              <span class="type-label">PDF</span>
+              <span class="type-value" id="weeklyPdf">0</span>
+            </div>
+            <div class="type-card">
+              <span class="type-label">PPTX</span>
+              <span class="type-value" id="weeklyPptx">0</span>
+            </div>
+            <div class="type-card">
+              <span class="type-label">DOCX</span>
+              <span class="type-value" id="weeklyDocx">0</span>
+            </div>
+            <div class="type-card">
+              <span class="type-label">TXT / MD</span>
+              <span class="type-value" id="weeklyTxt">0</span>
+            </div>
+            <div class="type-card">
+              <span class="type-label">Autres</span>
+              <span class="type-value" id="weeklyOther">0</span>
+            </div>
+          </div>
+
+          <!-- Graphiques -->
+          <div class="section-title">Graphiques</div>
+          <div class="weekly-chart-grid">
+            <div class="weekly-chart">
+              <div class="chart-header">
+                <h3>Utilisation par fichier (barres)</h3>
+                <span class="chart-meta" id="weeklyChartMeta">0 fichier</span>
+              </div>
+              <div class="plotly-chart" id="fileUsageChart"></div>
+            </div>
+
+            <div class="weekly-chart line-chart">
+              <div class="chart-header">
+                <h3>Évolution (courbe)</h3>
+                <span class="chart-meta" id="weeklyLineMeta">0 fichier</span>
+              </div>
+              <div class="plotly-chart" id="fileUsageLineChart"></div>
+            </div>
+
+            <div class="weekly-chart file-detail-chart">
+              <div class="chart-header">
+                <h3>Détail d'utilisation du fichier sélectionné</h3>
+                <button
+                  class="chart-meta chart-meta-btn"
+                  id="fileDetailSelectBtn"
+                  type="button"
+                >
+                  Sélectionner un fichier
+                </button>
+              </div>
+              <div class="plotly-chart" id="fileDetailChart"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ===== MODAL SÉLECTION FICHIER ===== -->
+    <div class="file-selection-modal" id="fileSelectionModal">
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Fichiers</h3>
+          <button class="modal-close" id="modalCloseBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <ul class="file-list" id="fileList"></ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="/static/config.js"></script>
+    <script src="/static/assets/theme.js?v=2"></script>
+
+    <script>
+      (() => {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          window.location.href = "/";
+          return;
+        }
+
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          if (payload.role !== "admin") {
+            window.location.href = "/chat";
+            return;
+          }
+
+          // Avatar
+          const username = localStorage.getItem("username") || "Admin";
+          const avatarEl = document.getElementById("adminAvatar");
+          const nameEl = document.getElementById("adminName");
+          if (avatarEl) avatarEl.textContent = username.charAt(0).toUpperCase();
+          if (nameEl) nameEl.textContent = username;
+        } catch {
+          window.location.href = "/";
+          return;
+        }
+
+        // Boutons navigation
+        document
+          .getElementById("logoutAdminBtn")
+          .addEventListener("click", async () => {
+            try {
+              await fetch(API_ENDPOINTS.logout, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token }),
+              });
+            } catch (e) {
+              console.warn("Déconnexion échouée :", e);
+            }
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("username");
+            window.location.href = "/";
+          });
+
+        document
+          .getElementById("backToChatBtn")
+          .addEventListener("click", () => {
+            window.location.href = "/chat";
+          });
+
+        document
+          .getElementById("adminControlsBtn")
+          .addEventListener("click", () => {
+            window.location.href = "/admin";
+          });
+
+        // ===== STATS BIBLIOTHÈQUE =====
+        async function loadStats() {
+          try {
+            const url =
+              typeof API_ENDPOINTS !== "undefined" &&
+              API_ENDPOINTS.collectionInfo
+                ? API_ENDPOINTS.collectionInfo
+                : "http://127.0.0.1:8000/admin/collection-info";
+
+            const response = await fetch(url, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+              const set = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val ?? 0;
+              };
+              set("statPdf", data.pdf_count);
+              set("statPptx", data.pptx_count);
+              set("statDocx", data.docx_count);
+              set("statTxt", data.txt_count);
+            }
+          } catch (e) {
+            console.error("Erreur chargement stats :", e);
+          }
+        }
+
+        // ===== STATS HEBDOMADAIRES =====
+        const weeklyUsernameInput = document.getElementById("weeklyUsername");
+        const weeklyStartInput = document.getElementById("weeklyStart");
+        const weeklyLoadBtn = document.getElementById("weeklyLoadBtn");
+        const weeklyStatusEl = document.getElementById("weeklyStatus");
+        const weeklyRangeEl = document.getElementById("weeklyRange");
+        const weeklyChartMetaEl = document.getElementById("weeklyChartMeta");
+        const weeklyLineMetaEl = document.getElementById("weeklyLineMeta");
+        const fileDetailSelectBtn = document.getElementById(
+          "fileDetailSelectBtn",
+        );
+        const scopeButtons = document.querySelectorAll(".scope-btn");
+
+        let currentWeeklyData = null;
+        let currentFileScope = "active";
+
+        function getChartThemeColors() {
+          const css = getComputedStyle(document.documentElement);
+          const text = css.getPropertyValue("--white").trim() || "#ffffff";
+          const muted = css.getPropertyValue("--muted").trim() || "#c7cede";
+          const borderSoft =
+            css.getPropertyValue("--border-soft").trim() ||
+            "rgba(255,255,255,0.08)";
+          const isLight =
+            document.documentElement.getAttribute("data-theme") === "light";
+          return {
+            text,
+            muted,
+            grid: isLight ? "rgba(63,47,26,0.12)" : borderSoft,
+            zero: isLight ? "rgba(63,47,26,0.18)" : "rgba(255,255,255,0.1)",
+          };
+        }
+
+        const fileSelectionModal =
+          document.getElementById("fileSelectionModal");
+        const modalOverlay = document.getElementById("modalOverlay");
+        const modalCloseBtn = document.getElementById("modalCloseBtn");
+        const modalTitle = document.getElementById("modalTitle");
+        const fileList = document.getElementById("fileList");
+
+        function closeFileModal() {
+          if (fileSelectionModal) fileSelectionModal.classList.remove("active");
+        }
+
+        function isStandardFileType(fileType) {
+          return [
+            "pdf",
+            "pptx",
+            "docx",
+            "txt",
+            "md",
+            "markdown",
+            "text",
+          ].includes((fileType || "").toLowerCase());
+        }
+
+        function getScopeLabel(scope) {
+          return scope === "deleted"
+            ? "Sessions supprimées"
+            : "Sessions actives";
+        }
+
+        function getScopedUsageData() {
+          if (!currentWeeklyData) return null;
+          const isDeleted = currentFileScope === "deleted";
+          return {
+            fileUsage: isDeleted
+              ? currentWeeklyData.file_usage_deleted || []
+              : currentWeeklyData.file_usage || [],
+            typeCounts: isDeleted
+              ? currentWeeklyData.file_type_unique_counts_deleted || {}
+              : currentWeeklyData.file_type_unique_counts || {},
+            totalFiles: isDeleted
+              ? (currentWeeklyData.total_files_used_deleted ?? 0)
+              : (currentWeeklyData.total_files_used ?? 0),
+            totalUses: isDeleted
+              ? (currentWeeklyData.total_file_uses_deleted ?? 0)
+              : (currentWeeklyData.total_file_uses ?? 0),
+          };
+        }
+
+        function resetFileDetailSelection() {
+          const chart = document.getElementById("fileDetailChart");
+          if (chart && window.Plotly) {
+            Plotly.purge(chart);
+            chart.innerHTML = "";
+          } else if (chart) {
+            chart.innerHTML = "";
+          }
+          if (fileDetailSelectBtn)
+            fileDetailSelectBtn.textContent = "Sélectionner un fichier";
+        }
+
+        function applyWeeklyScope(scope) {
+          if (!currentWeeklyData) {
+            setWeeklyStatus("Chargez d'abord les statistiques.", "error");
+            return;
+          }
+          currentFileScope = scope === "deleted" ? "deleted" : "active";
+          scopeButtons.forEach((btn) => {
+            btn.classList.toggle(
+              "is-active",
+              btn.dataset.scope === currentFileScope,
+            );
+          });
+          const scoped = getScopedUsageData();
+          if (!scoped) return;
+
+          const set = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val ?? 0;
+          };
+          set("weeklyFileTotal", scoped.totalFiles);
+          set("weeklyFileUses", scoped.totalUses);
+
+          const typeCounts = normalizeTypeCounts(scoped.typeCounts || {});
+          set("weeklyPdf", typeCounts.pdf);
+          set("weeklyPptx", typeCounts.pptx);
+          set("weeklyDocx", typeCounts.docx);
+          set("weeklyTxt", typeCounts.txt);
+          set("weeklyOther", typeCounts.other);
+
+          renderFileUsageChart(scoped.fileUsage || []);
+          renderFileUsageLineChart(scoped.fileUsage || []);
+          resetFileDetailSelection();
+        }
+
+        function openFileModal(fileType, fileTypeLabel) {
+          const scoped = getScopedUsageData();
+          if (!scoped || !Array.isArray(scoped.fileUsage)) {
+            setWeeklyStatus("Chargez d'abord les statistiques.", "error");
+            return;
+          }
+          let filteredFiles = scoped.fileUsage;
+          if (fileType === "txt") {
+            filteredFiles = filteredFiles.filter((f) =>
+              ["txt", "md", "markdown", "text"].includes(
+                (f.file_type || "").toLowerCase(),
+              ),
+            );
+          } else if (fileType === "other") {
+            filteredFiles = filteredFiles.filter(
+              (f) => !isStandardFileType(f.file_type),
+            );
+          } else if (fileType !== "all") {
+            filteredFiles = filteredFiles.filter(
+              (f) => (f.file_type || "").toLowerCase() === fileType,
+            );
+          }
+          if (modalTitle)
+            modalTitle.textContent = `Fichiers – ${fileTypeLabel} (${getScopeLabel(currentFileScope)})`;
+          if (fileList) {
+            fileList.innerHTML = "";
+            if (filteredFiles.length === 0) {
+              const empty = document.createElement("li");
+              empty.style.cssText =
+                "color:var(--muted);font-size:14px;padding:16px;";
+              empty.textContent = "Aucun fichier pour cette sélection.";
+              fileList.appendChild(empty);
+            } else {
+              filteredFiles.forEach((file) => {
+                const li = document.createElement("li");
+                li.className = "file-list-item";
+                li.innerHTML = `<span class="file-item-name">${file.filename || "Document"}</span><span class="file-item-meta">${file.uses || 0} utilisation${file.uses !== 1 ? "s" : ""}</span>`;
+                li.addEventListener("click", () => {
+                  closeFileModal();
+                  loadFileDetails(file);
+                });
+                fileList.appendChild(li);
+              });
+            }
+          }
+          if (fileSelectionModal) fileSelectionModal.classList.add("active");
+        }
+
+        function loadFileDetails(file) {
+          const username = weeklyUsernameInput.value.trim();
+          const startDate = weeklyStartInput ? weeklyStartInput.value : "";
+          const sourcePath = file.source_path || file.filename;
+          const baseUrl =
+            typeof API_ENDPOINTS !== "undefined" &&
+            API_ENDPOINTS.userFileDailyTrend
+              ? API_ENDPOINTS.userFileDailyTrend
+              : "http://127.0.0.1:8000/admin/user-file-daily-trend";
+          const params = new URLSearchParams({
+            username,
+            source_path: sourcePath,
+            session_scope: currentFileScope,
+          });
+          if (startDate) params.append("start_date", startDate);
+          if (fileDetailSelectBtn)
+            fileDetailSelectBtn.textContent = "Chargement...";
+          fetch(`${baseUrl}?${params.toString()}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+            .then((r) => r.json().catch(() => ({})))
+            .then((data) => {
+              if (data.daily_usage) {
+                renderFileDailyChart(
+                  file.filename || "Document",
+                  data.daily_usage,
+                );
+                if (fileDetailSelectBtn)
+                  fileDetailSelectBtn.textContent = file.filename || "Document";
+              } else if (fileDetailSelectBtn) {
+                fileDetailSelectBtn.textContent = "Erreur de chargement";
+              }
+            })
+            .catch((e) => {
+              console.error("Erreur détail fichier :", e);
+              if (fileDetailSelectBtn)
+                fileDetailSelectBtn.textContent = "Erreur de connexion";
+            });
+        }
+
+        function renderFileDailyChart(filename, dailyUsage) {
+          const chart = document.getElementById("fileDetailChart");
+          if (!chart) return;
+          if (!window.Plotly) {
+            chart.innerHTML = `<div class="chart-empty">Plotly est indisponible.</div>`;
+            return;
+          }
+          const dates = Object.keys(dailyUsage).sort();
+          const values = dates.map((d) => dailyUsage[d]);
+          if (dates.length === 0) {
+            Plotly.purge(chart);
+            chart.innerHTML = `<div class="chart-empty">Aucune donnée disponible.</div>`;
+            return;
+          }
+          const cc = getChartThemeColors();
+          chart.style.height = "400px";
+          chart.style.minHeight = "400px";
+          Plotly.newPlot(
+            chart,
+            [
+              {
+                type: "scatter",
+                mode: "lines+markers",
+                x: dates,
+                y: values,
+                line: { color: "#f58a00", width: 3 },
+                marker: { color: "#ffd08a", size: 7 },
+                hovertemplate: "%{x}<br>Utilisations : %{y}<extra></extra>",
+              },
+            ],
+            {
+              title: `Utilisation quotidienne – ${filename}`,
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              margin: { l: 40, r: 24, t: 50, b: 80 },
+              xaxis: {
+                color: cc.muted,
+                gridcolor: cc.grid,
+                tickangle: -45,
+                tickfont: { size: 10 },
+                automargin: true,
+              },
+              yaxis: {
+                title: "Utilisations",
+                color: cc.muted,
+                gridcolor: cc.grid,
+                zerolinecolor: cc.zero,
+              },
+              font: { family: "Space Grotesk, sans-serif", color: cc.text },
+              height: 400,
+            },
+            { displayModeBar: false, responsive: true },
+          );
+        }
+
+        function truncateLabel(label, maxLength) {
+          if (!label) return "";
+          if (label.length <= maxLength) return label;
+          return label.slice(0, Math.max(maxLength - 1, 1)).trimEnd() + "…";
+        }
+
+        function normalizeTypeCounts(counts) {
+          const normalized = {
+            pdf: counts.pdf || 0,
+            pptx: counts.pptx || 0,
+            docx: counts.docx || 0,
+            txt:
+              (counts.txt || 0) +
+              (counts.md || 0) +
+              (counts.markdown || 0) +
+              (counts.text || 0),
+            other: 0,
+          };
+          Object.keys(counts).forEach((key) => {
+            if (
+              ![
+                "pdf",
+                "pptx",
+                "docx",
+                "txt",
+                "md",
+                "markdown",
+                "text",
+              ].includes(key)
+            )
+              normalized.other += counts[key] || 0;
+          });
+          return normalized;
+        }
+
+        function renderFileUsageChart(fileUsage) {
+          const chart = document.getElementById("fileUsageChart");
+          if (!chart) return;
+          if (
+            !window.Plotly ||
+            !Array.isArray(fileUsage) ||
+            fileUsage.length === 0
+          ) {
+            if (window.Plotly) Plotly.purge(chart);
+            chart.innerHTML = `<div class="chart-empty">Aucune source disponible pour cette période.</div>`;
+            if (weeklyChartMetaEl) weeklyChartMetaEl.textContent = "0 fichier";
+            return;
+          }
+          const sorted = [...fileUsage].sort(
+            (a, b) => (b.uses || 0) - (a.uses || 0),
+          );
+          if (weeklyChartMetaEl)
+            weeklyChartMetaEl.textContent = `${sorted.length} fichier${sorted.length !== 1 ? "s" : ""}`;
+          const fullLabels = sorted.map(
+            (item) =>
+              `${item.filename || "Document"}${item.file_type ? ` (${String(item.file_type).toUpperCase()})` : ""}`,
+          );
+          const labels = fullLabels.map((l) => truncateLabel(l, 24));
+          const values = sorted.map((item) => item.uses || 0);
+          const cc = getChartThemeColors();
+          const height = Math.max(420, sorted.length * 32);
+          chart.style.height = `${height}px`;
+          chart.style.minHeight = `${height}px`;
+          Plotly.newPlot(
+            chart,
+            [
+              {
+                type: "bar",
+                orientation: "h",
+                y: labels,
+                x: values,
+                hovertext: fullLabels,
+                width: 0.5,
+                marker: {
+                  color: "#f58a00",
+                  line: { color: "rgba(245,138,0,0.35)", width: 1 },
+                },
+                hovertemplate:
+                  "%{hovertext}<br>Utilisations : %{x}<extra></extra>",
+              },
+            ],
+            {
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              margin: { l: 140, r: 24, t: 10, b: 30 },
+              bargap: 0.35,
+              height,
+              xaxis: {
+                title: "Utilisations",
+                color: cc.muted,
+                gridcolor: cc.grid,
+                zerolinecolor: cc.zero,
+                tickfont: { size: 10 },
+              },
+              yaxis: {
+                color: cc.muted,
+                tickfont: { size: 10 },
+                autorange: "reversed",
+                categoryorder: "array",
+                categoryarray: labels,
+              },
+              font: { family: "Space Grotesk, sans-serif", color: cc.text },
+            },
+            { displayModeBar: false, responsive: true },
+          );
+        }
+
+        function renderFileUsageLineChart(fileUsage) {
+          const chart = document.getElementById("fileUsageLineChart");
+          if (!chart) return;
+          if (
+            !window.Plotly ||
+            !Array.isArray(fileUsage) ||
+            fileUsage.length === 0
+          ) {
+            if (window.Plotly) Plotly.purge(chart);
+            chart.innerHTML = `<div class="chart-empty">Aucune source disponible pour cette période.</div>`;
+            if (weeklyLineMetaEl) weeklyLineMetaEl.textContent = "0 fichier";
+            return;
+          }
+          const sorted = [...fileUsage].sort(
+            (a, b) => (b.uses || 0) - (a.uses || 0),
+          );
+          if (weeklyLineMetaEl)
+            weeklyLineMetaEl.textContent = `${sorted.length} fichier${sorted.length !== 1 ? "s" : ""}`;
+          const fullLabels = sorted.map(
+            (item) =>
+              `${item.filename || "Document"}${item.file_type ? ` (${String(item.file_type).toUpperCase()})` : ""}`,
+          );
+          const labels = fullLabels.map((l) => truncateLabel(l, 18));
+          const values = sorted.map((item) => item.uses || 0);
+          const cc = getChartThemeColors();
+          Plotly.newPlot(
+            chart,
+            [
+              {
+                type: "scatter",
+                mode: "lines+markers",
+                x: labels,
+                y: values,
+                hovertext: fullLabels,
+                line: { color: "#f58a00", width: 3 },
+                marker: { color: "#ffd08a", size: 7 },
+                hovertemplate:
+                  "%{hovertext}<br>Utilisations : %{y}<extra></extra>",
+              },
+            ],
+            {
+              paper_bgcolor: "rgba(0,0,0,0)",
+              plot_bgcolor: "rgba(0,0,0,0)",
+              margin: { l: 40, r: 24, t: 10, b: 80 },
+              xaxis: {
+                color: cc.muted,
+                gridcolor: cc.grid,
+                tickangle: -25,
+                tickfont: { size: 10 },
+                automargin: true,
+              },
+              yaxis: {
+                title: "Utilisations",
+                color: cc.muted,
+                gridcolor: cc.grid,
+                zerolinecolor: cc.zero,
+              },
+              font: { family: "Space Grotesk, sans-serif", color: cc.text },
+            },
+            { displayModeBar: false, responsive: true },
+          );
+        }
+
+        function setWeeklyStatus(message, tone) {
+          if (!weeklyStatusEl) return;
+          weeklyStatusEl.textContent = message;
+          weeklyStatusEl.dataset.tone = tone || "info";
+        }
+
+        function toISODate(date) {
+          const y = date.getFullYear(),
+            m = String(date.getMonth() + 1).padStart(2, "0"),
+            d = String(date.getDate()).padStart(2, "0");
+          return `${y}-${m}-${d}`;
+        }
+
+        function getWeekStart(date) {
+          const base = new Date(date);
+          const day = base.getDay();
+          const diff = (day === 0 ? -6 : 1) - day;
+          base.setDate(base.getDate() + diff);
+          base.setHours(0, 0, 0, 0);
+          return base;
+        }
+
+        async function loadWeeklyStats() {
+          const username = weeklyUsernameInput.value.trim();
+          if (!username) {
+            setWeeklyStatus("Veuillez saisir un nom d'utilisateur.", "error");
+            weeklyUsernameInput.focus();
+            return;
+          }
+          const startDate = weeklyStartInput ? weeklyStartInput.value : "";
+          const baseUrl =
+            typeof API_ENDPOINTS !== "undefined" &&
+            API_ENDPOINTS.userWeeklyStats
+              ? API_ENDPOINTS.userWeeklyStats
+              : "http://127.0.0.1:8000/admin/user-weekly-stats";
+          const params = new URLSearchParams({ username });
+          if (startDate) params.append("start_date", startDate);
+          setWeeklyStatus("Chargement en cours...", "info");
+          try {
+            const response = await fetch(`${baseUrl}?${params.toString()}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+              setWeeklyStatus(
+                data.detail || "Erreur lors du chargement.",
+                "error",
+              );
+              return;
+            }
+            if (weeklyRangeEl)
+              weeklyRangeEl.textContent = `Du ${data.start_date} au ${data.end_date}`;
+            const requestEl = document.getElementById("weeklyRequestCount");
+            if (requestEl) requestEl.textContent = data.request_count ?? 0;
+            currentWeeklyData = data;
+            applyWeeklyScope(currentFileScope);
+            setWeeklyStatus("Mise à jour terminée.", "success");
+          } catch (e) {
+            setWeeklyStatus("Erreur de connexion au serveur.", "error");
+          }
+        }
+
+        function initFileSelection() {
+          if (modalCloseBtn)
+            modalCloseBtn.addEventListener("click", closeFileModal);
+          if (modalOverlay)
+            modalOverlay.addEventListener("click", closeFileModal);
+
+          document.querySelectorAll(".type-card").forEach((card) => {
+            card.addEventListener("click", () => {
+              const label =
+                card.querySelector(".type-label")?.textContent || "Autres";
+              const normalized = label.toLowerCase().trim();
+              if (normalized === "pdf") openFileModal("pdf", label);
+              else if (normalized === "pptx") openFileModal("pptx", label);
+              else if (normalized === "docx") openFileModal("docx", label);
+              else if (normalized === "txt / md") openFileModal("txt", label);
+              else if (normalized === "autres") openFileModal("other", label);
+            });
+          });
+
+          const totalFilesCard = document.getElementById("weeklyFileTotalCard");
+          if (totalFilesCard)
+            totalFilesCard.addEventListener("click", () =>
+              openFileModal("all", "Tous les fichiers"),
+            );
+          if (fileDetailSelectBtn)
+            fileDetailSelectBtn.addEventListener("click", () =>
+              openFileModal("all", "Tous les fichiers"),
+            );
+
+          scopeButtons.forEach((btn) => {
+            btn.addEventListener("click", () =>
+              applyWeeklyScope(btn.dataset.scope || "active"),
+            );
+          });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+          if (weeklyStartInput)
+            weeklyStartInput.value = toISODate(getWeekStart(new Date()));
+          if (weeklyUsernameInput) {
+            const stored = (localStorage.getItem("username") || "").trim();
+            if (stored) weeklyUsernameInput.value = stored;
+          }
+          if (weeklyLoadBtn)
+            weeklyLoadBtn.addEventListener("click", loadWeeklyStats);
+          [weeklyUsernameInput, weeklyStartInput]
+            .filter(Boolean)
+            .forEach((input) => {
+              input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  loadWeeklyStats();
+                }
+              });
+            });
+          loadStats();
+          initFileSelection();
+        });
+      })();
+    </script>
+  </body>
+</html>

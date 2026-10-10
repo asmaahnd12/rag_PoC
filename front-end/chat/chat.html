@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot-IA - Chat</title>
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem("sont_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="/static/assets/theme.css?v=6" />
+    <link rel="stylesheet" href="/static/chat/chat.css" />
+  </head>
+
+  <body class="chat-page">
+    <div class="app">
+      <!-- ===== SIDEBAR ===== -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo">
+            <img src="/static/assets/app-logo.png" alt="Chatbot-IA Logo" />
+          </div>
+
+          <div class="brand-text">
+            <div class="brand-title">Chatbot-IA</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="newChatBtn" type="button">
+          + Nouveau chat
+        </button>
+
+        <div class="sidebar-section">
+          <div class="section-title">Historique</div>
+
+          <div class="history" id="historyList">
+            <div class="empty-history">
+              <div class="empty-hint">
+                Aucune discussion pour le moment.<br />
+                Clique sur <b>Nouveau chat</b> pour commencer.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <!-- Personnalité -->
+          <div class="persona-wrap">
+            <div class="section-title" style="margin-bottom: 8px">
+              Personnalité
+            </div>
+            <select id="persona" class="persona-select">
+              <option>Expert</option>
+              <option>Simple</option>
+              <option>Technique</option>
+            </select>
+          </div>
+
+          <!-- Bouton Admin : visible uniquement pour les admins (géré en JS) -->
+          <button
+            class="btn btn-admin btn-block"
+            id="adminBtn"
+            type="button"
+            style="display: none"
+          >
+            🛠️ Panneau Admin
+          </button>
+
+          <div class="user-card">
+            <div class="avatar" id="sidebarAvatar">FA</div>
+            <div class="user-info">
+              <div class="user-name" id="sidebarUserName">Utilisateur</div>
+              <div class="user-role" id="sidebarUserRole">Employé</div>
+            </div>
+
+            <button class="link-logout" id="logoutBtn" type="button">
+              Déconnexion
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ===== MAIN ===== -->
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1 id="chatTitle">Nouveau chat</h1>
+          </div>
+        </header>
+
+        <section class="chat">
+          <div class="messages" id="messages"></div>
+
+          <div class="composer">
+            <button class="icon-btn" type="button" title="Joindre un fichier">
+              📎
+            </button>
+            <button
+              class="icon-btn"
+              id="recordBtn"
+              type="button"
+              title="Parler (STT)"
+            >
+              🎙️
+            </button>
+
+            <input
+              id="messageInput"
+              class="composer-input"
+              type="text"
+              placeholder="Écris ta question ici..."
+              autocomplete="off"
+            />
+
+            <button id="sendBtn" class="btn btn-primary" type="button">
+              Envoyer ➤
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/lib/marked.min.js"></script>
+    <script>
+      window.addEventListener("load", () => {
+        if (!window.marked || !window.marked.parse) {
+          console.error("✗ marked.js failed to load!");
+        }
+      });
+    </script>
+    <script src="/static/config.js"></script>
+    <script src="/static/assets/theme.js?v=2"></script>
+    <script src="/static/chat/chat.js?v=7"></script>
+  </body>
+</html>

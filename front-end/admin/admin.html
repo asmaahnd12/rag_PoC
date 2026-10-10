@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot-IA – Panneau admin</title>
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem("sont_theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="/static/assets/theme.css?v=6" />
+    <link rel="stylesheet" href="/static/admin/admin.css?v=101" />
+
+    <style>
+      .admin-action-panel {
+        display: none;
+        margin-top: 28px;
+        background: var(--panel2);
+        border: 1px solid var(--border-soft);
+        border-radius: 22px;
+        padding: 24px;
+      }
+
+      .admin-action-panel.open {
+        display: block;
+      }
+
+      .admin-action-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .admin-action-header h2 {
+        font-size: 20px;
+        color: var(--text);
+      }
+
+      .admin-form {
+        display: grid;
+        gap: 12px;
+        max-width: 520px;
+      }
+
+      .admin-form label {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .admin-form input,
+      .admin-form select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--border-soft);
+        background: var(--input-bg);
+        color: var(--text);
+        outline: none;
+      }
+
+      .admin-form input:focus,
+      .admin-form select:focus {
+        border-color: var(--orange);
+      }
+
+      .admin-form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 6px;
+      }
+
+      .admin-result {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .user-row {
+        display: grid;
+        grid-template-columns: 70px 1fr 1fr 110px;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--border-soft);
+        background: var(--panel-soft);
+        font-size: 13px;
+      }
+
+      .user-row.header {
+        color: var(--orange);
+        font-weight: 900;
+        background: var(--orange-glow);
+      }
+
+      .admin-close-btn {
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        border-radius: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .admin-close-btn:hover {
+        color: var(--orange);
+        background: var(--orange-glow);
+      }
+    </style>
+  </head>
+
+  <body class="admin-page">
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo">
+            <img src="/static/assets/app-logo.png" alt="Logo" />
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">Chatbot-IA</div>
+            <div class="brand-sub">Admin Panel</div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button
+            class="nav-btn"
+            id="navBack"
+            onclick="window.location.href = '/chat'"
+          >
+            <span class="nav-icon">💬</span> Retour au Chat
+          </button>
+
+          <button class="nav-btn active" id="navPersonalities">
+            <span class="nav-icon">🤖</span> Personnalités
+          </button>
+
+          <button class="nav-btn" id="navManageUsers">
+            <span class="nav-icon">👥</span> Gérer Utilisateur
+          </button>
+
+          <button class="nav-btn" id="navUploadFile">
+            <span class="nav-icon">📁</span> Importer un fichier
+          </button>
+
+          <button
+            class="nav-btn"
+            id="navStatsPage"
+            onclick="window.location.href = '/stats'"
+          >
+            <span class="nav-icon">📊</span> Statistiques
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-card">
+            <div class="avatar-sm" id="adminAvatar">A</div>
+            <div class="user-info">
+              <div class="user-name" id="adminName">Admin</div>
+              <div class="user-role">Administrateur</div>
+            </div>
+          </div>
+          <button class="btn-logout" id="logoutBtn">Déconnexion</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="main-header">
+          <div>
+            <h1>Gestion des Personnalités IA</h1>
+            <p class="subtitle">Entreprise de pétrole et de gaz</p>
+          </div>
+          <div class="header-badge" id="countBadge">0 / 5 personnalités</div>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid"></div>
+
+        <section class="admin-action-panel" id="adminActionPanel">
+          <div class="admin-action-header">
+            <div class="admin-action-title">
+              <button
+                class="admin-back-btn is-hidden"
+                id="adminActionBack"
+                type="button"
+                aria-label="Retour"
+              >
+                ←
+              </button>
+              <h2 id="adminActionTitle">Gestion utilisateur</h2>
+            </div>
+            <button class="admin-close-btn" id="adminActionClose">
+              Fermer
+            </button>
+          </div>
+
+          <div id="adminActionContent"></div>
+          <div class="admin-result" id="adminActionResult"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="modalTitle">Nouvelle personnalité</h2>
+          <button class="modal-close" id="modalClose">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <label>Nom de la personnalité</label>
+          <input
+            type="text"
+            id="modalName"
+            placeholder="Ex: Expert Sécurité"
+            maxlength="40"
+          />
+
+          <label>
+            Prompt système
+            <span class="char-count" id="charCount">0 / 500</span>
+          </label>
+          <textarea
+            id="modalPrompt"
+            placeholder="Décris le comportement de cet assistant..."
+            maxlength="500"
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" id="modalCancel">Annuler</button>
+          <button class="btn-save" id="modalSave">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="personalityConfirmOverlay">
+      <div
+        class="modal confirm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="personalityConfirmTitle"
+      >
+        <div class="modal-header">
+          <h2 id="personalityConfirmTitle">Valider la personnalité</h2>
+          <button class="modal-close" id="personalityConfirmClose">✕</button>
+        </div>
+
+        <div class="modal-body confirm-modal-body">
+          <p class="confirm-modal-lead">
+            Cette personnalité sera enregistrée et pourra être utilisée dans la
+            plateforme.
+          </p>
+
+          <div class="confirm-modal-note">
+            <div class="confirm-modal-label">Impact fonctionnel</div>
+            <ul class="confirm-modal-list">
+              <li>Elle influence le ton et les règles de réponse.</li>
+              <li>Elle sera disponible pour les utilisateurs autorisés.</li>
+              <li>Vérifiez la cohérence et la conformité du prompt.</li>
+            </ul>
+          </div>
+
+          <p class="confirm-modal-foot" id="personalityConfirmName"></p>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" id="personalityConfirmCancel">
+            Annuler
+          </button>
+          <button class="btn-save" id="personalityConfirmProceed">
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="uploadConfirmOverlay">
+      <div
+        class="modal upload-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="uploadConfirmTitle"
+      >
+        <div class="modal-header">
+          <h2 id="uploadConfirmTitle">Importer un fichier</h2>
+          <button class="modal-close" id="uploadConfirmClose">✕</button>
+        </div>
+
+        <div class="modal-body upload-modal-body">
+          <p class="upload-modal-lead">
+            Le fichier importé sera ajouté à la base documentaire principale.
+          </p>
+
+          <div class="upload-modal-note">
+            <div class="upload-modal-label">Ce que cela implique</div>
+            <ul class="upload-modal-list">
+              <li>Son contenu sera indexé et intégré aux réponses RAG.</li>
+              <li>Il sera disponible pour tous les utilisateurs.</li>
+              <li>Vérifiez qu'il ne contient pas d'informations sensibles.</li>
+            </ul>
+          </div>
+
+          <p class="upload-modal-foot">
+            Formats acceptés : PDF, DOCX, PPTX, TXT, MD. Taille max : 20 MB.
+          </p>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" id="uploadConfirmCancel">Annuler</button>
+          <button class="btn-save" id="uploadConfirmProceed">Importer</button>
+        </div>
+      </div>
+    </div>
+
+    <input
+      type="file"
+      id="adminFileUpload"
+      style="display: none"
+      accept=".txt,.md,.pdf,.docx,.pptx"
+    />
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/config.js"></script>
+    <script src="/static/assets/theme.js?v=2"></script>
+    <script src="/static/admin/admin.js?v=31"></script>
+  </body>
+</html>

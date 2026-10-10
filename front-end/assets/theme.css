@@ -1,0 +1,171 @@
+/* Global theme switch shared across all frontend pages */
+.theme-switch {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 5000;
+  width: 74px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #f0f0f0;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(20, 20, 30, 0.12);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.theme-switch.is-dark {
+  background: #18181b;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.theme-switch.is-light {
+  background: #f3f4f6;
+  box-shadow:
+    0 6px 14px rgba(62, 47, 26, 0.16),
+    inset 0 0 0 1px rgba(62, 47, 26, 0.16);
+}
+
+.theme-switch-track-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.35;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.theme-switch-track-icon.sun {
+  left: 10px;
+}
+
+.theme-switch-track-icon.moon {
+  right: 10px;
+}
+
+.theme-switch.is-light .theme-switch-track-icon.sun,
+.theme-switch.is-dark .theme-switch-track-icon.moon {
+  opacity: 0.85;
+}
+
+.theme-switch.is-dark .theme-switch-track-icon {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.theme-switch.is-light .theme-switch-track-icon {
+  color: rgba(0, 0, 0, 0.46);
+}
+
+.theme-switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #2f3fb5;
+  color: #f5f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  box-shadow:
+    0 5px 10px rgba(31, 41, 55, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  transition: left 0.25s ease;
+}
+
+.theme-switch.is-dark .theme-switch-knob {
+  left: 45px;
+}
+
+.theme-switch.is-light .theme-switch-knob {
+  background: #d97706;
+  color: #fff8ed;
+  box-shadow:
+    0 5px 10px rgba(120, 53, 15, 0.28),
+    inset 0 0 0 1px rgba(255, 248, 237, 0.22);
+}
+
+body.admin-page .theme-switch {
+  position: absolute;
+  top: 8px;
+  right: 78px;
+  z-index: 9000;
+  display: block;
+}
+
+/* On stats page the toggle should scroll with content (not fixed). */
+body.stats-page .theme-switch {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+}
+
+body.chat-page .theme-switch {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+}
+
+.theme-switch:focus-visible {
+  outline: 2px solid #f57c00;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .theme-switch {
+    width: 68px;
+    height: 30px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .theme-switch-track-icon {
+    font-size: 12px;
+  }
+
+  .theme-switch-track-icon.sun {
+    left: 9px;
+  }
+
+  .theme-switch-track-icon.moon {
+    right: 9px;
+  }
+
+  .theme-switch-knob {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    top: 3px;
+    left: 3px;
+  }
+
+  .theme-switch.is-dark .theme-switch-knob {
+    left: 41px;
+  }
+
+  body.admin-page .theme-switch {
+    top: 8px;
+    right: 14px;
+  }
+
+  body.stats-page .theme-switch {
+    top: 14px;
+    right: 16px;
+  }
+
+  body.chat-page .theme-switch {
+    top: 8px;
+    right: 10px;
+  }
+}
